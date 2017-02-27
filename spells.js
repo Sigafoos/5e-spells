@@ -12,6 +12,7 @@ function parseSpells() {
 	}
 
 	$('#filters').change(filterSpells);
+	$('#text').keyup(filterSpells);
 }
 
 function appendSpell(spell) {
@@ -30,8 +31,12 @@ function appendSpell(spell) {
 	}
 
 	var heading = $('<div></div>')
-		.addClass('panel-heading')
+		.addClass('panel-heading');
+
+	var spellName = $('<span></span>')
+		.addClass('spell-name')
 		.text(spell.name);
+	heading.append(spellName);
 
 	var info = $('<span></span>')
 		.addClass('pull-right')
@@ -64,7 +69,7 @@ function parseAttrs(spell) {
 		concentration: (spell.concentration == 'yes'),
 		level: (spell.level.substr(0, 1) == 'C') ? 0 : spell.level.substr(0, 1),
 		classes: spell.class.split(', '),
-		school: spell.school
+		school: spell.school.toLowerCase()
 	};
 }
 
@@ -83,12 +88,37 @@ function filterSpells() {
 
 	var classes = $('#classes').find(':checked').map(function() { return this.id; }).get();
 	var levels = $('#levels').find(':checked').map(function() { return this.id.substr(3); }).get();
+	var schools = $('#schools').find(':checked').map(function() { return this.id; }).get();
+	var spellName = $('#text').val().toLowerCase();
+
 	$('.panel').filter(function() {
 		if (!filterByClass(this, classes)) {
 			return false;
 		}
 
 		if (!filterByLevel(this, levels)) {
+			return false;
+		}
+
+		if ($('#conc-yes').is(':checked') && !$(this).data('concentration')) {
+			return false;
+		}
+		if ($('#conc-no').is(':checked') && $(this).data('concentration')) {
+			return false;
+		}
+
+		if ($('#rit-yes').is(':checked') && !$(this).data('ritual')) {
+			return false;
+		}
+		if ($('#rit-no').is(':checked') && $(this).data('ritual')) {
+			return false;
+		}
+
+		if (!filterBySchool(this, schools)) {
+			return false;
+		}
+
+		if (spellName && $(this).find('.spell-name')[0].textContent.toLowerCase().indexOf(spellName) == -1) {
 			return false;
 		}
 
@@ -121,6 +151,20 @@ function filterByLevel(el, levels) {
 			}
 		}.bind(el));
 		return inLevel;
+	}
+	return true;
+}
+
+function filterBySchool(el, schools) {
+	if (schools.length > 0) {
+		var inSchool = false;
+		schools.forEach(function(schoolName) {
+			if ($(el).data('school') == schoolName) {
+				inSchool = true;
+				return true;
+			}
+		});
+		return inSchool;
 	}
 	return true;
 }

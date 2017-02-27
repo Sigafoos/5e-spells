@@ -95,7 +95,81 @@
 			  </div>
 		  </div>
 	  </form>
+
+	  <form id="concentration">
+		  <div class="form-group">
+			  <label>Concentration</label>
+			  <div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default active">
+					  <input type="radio" name="conc" id="conc-either" autocomplete="off" checked> Either
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="radio" name="conc" id="conc-yes" autocomplete="off"> Yes
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="radio" name="conc" id="conc-no" autocomplete="off"> No
+				  </label>
+			  </div>
+		  </div>
+	  </form>
+
+	  <form id="ritual">
+		  <div class="form-group">
+			  <label>Ritual</label>
+			  <div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default active">
+					  <input type="radio" name="rit" id="rit-either" autocomplete="off" checked> Either
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="radio" name="rit" id="rit-yes" autocomplete="off"> Yes
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="radio" name="rit" id="rit-no" autocomplete="off"> No
+				  </label>
+			  </div>
+		  </div>
+	  </form>
+
+	  <form id="schools">
+		  <div class="form-group">
+			  <label>School</label>
+			  <div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="abjuration">Abjuration
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="conjuration">Conjuration
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="divination">Divination
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="enchantment">Enchantment
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="evocation">Evocation
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="illusion">Illusion
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="necromancy">Necromancy
+				  </label>
+				  <label class="btn btn-default">
+					  <input type="checkbox" id="transmutation">Transmutation
+				  </label>
+			  </div>
+		  </div>
+	  </form>
+
   </div>
+
+  <form class="form-inline">
+	  <div class="form-group">
+		  <label for="text">Name contains</label>
+		  <input type="text" class="form-control" id="text" />
+	  </div>
+  </form>
 
   <h2>Spells</h2>
   <div id="spells"></div>

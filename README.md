@@ -4,11 +4,6 @@ Because you own the Player's Handbook, but flipping through it is a pain in the 
 Loads the spell list from an [external file](https://www.reddit.com/r/DnD/comments/33i1hd/5e_spell_reference_mobile_app/cqocaf8/) and saves it in localstorage. Provides various filters.
 
 ## To do
-* Filter by concentration
-* Filter by ritual
-* Filter by school
-* Filter by name
-
 ### Maybe?
 * Save to a personal (localstorage) spell book?
 * Hide the filters in a hamburger menu?
