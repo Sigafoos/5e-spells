@@ -1,7 +1,7 @@
 # D&D 5e spellbook
 Because you own the Player's Handbook, but flipping through it is a pain in the ass.
 
-Loads the spell list from an external file and saves it in localstorage. Provides various filters.
+Loads the spell list from an [external file](https://www.reddit.com/r/DnD/comments/33i1hd/5e_spell_reference_mobile_app/cqocaf8/) and saves it in localstorage. Provides various filters.
 
 ## To do
 * Filter by concentration

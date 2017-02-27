@@ -23,7 +23,7 @@ function appendSpell(spell) {
 	var attrs = parseAttrs(spell);
 	var tags = [];
 	for (var key in attrs) {
-		if (attrs[key] == true) {
+		if (attrs[key] === true) {
 			tags.push(key);
 		}
 		addSpellAttr(panel, key, attrs[key]);
