@@ -43,7 +43,7 @@ function appendSpell(spell) {
 
 	var footer = $('<div></div>')
 		.addClass('panel-footer')
-		.text(tags.join(', '));
+		.text(tags.concat(attrs.classes).join(', '));
 
 	body.append($.parseHTML(spell.desc));
 	if (spell.higher_level) {
