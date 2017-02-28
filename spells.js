@@ -11,11 +11,20 @@ function parseSpells() {
 		JSON.parse(localStorage['spells']).forEach(appendSpell);
 	}
 
+	updateUI();
+	$('#spell-total').text($('.spell').length);
 	$('#filters').change(filterSpells);
 	$('#text').keyup(filterSpells);
 }
 
 function appendSpell(spell) {
+	var wrapper = $('<div></div>')
+		.addClass('spell')
+		.addClass('col-sm-6')
+		.addClass('col-md-4')
+		.addClass('col-lg-3')
+		;
+
 	var panel = $('<div></div>')
 		.addClass('panel')
 		.addClass('panel-default')
@@ -27,7 +36,7 @@ function appendSpell(spell) {
 		if (attrs[key] === true) {
 			tags.push(key);
 		}
-		addSpellAttr(panel, key, attrs[key]);
+		addSpellAttr(wrapper, key, attrs[key]);
 	}
 
 	var heading = $('<div></div>')
@@ -38,7 +47,7 @@ function appendSpell(spell) {
 		.text(spell.name);
 	heading.append(spellName);
 
-	var info = $('<span></span>')
+	var info = $('<div></div>')
 		.addClass('pull-right')
 		.text(spell.level + ' ' + spell.school);
 	heading.append(info);
@@ -57,7 +66,19 @@ function appendSpell(spell) {
 	heading.appendTo(panel);
 	body.appendTo(panel);
 	footer.appendTo(panel);
-	panel.appendTo($('#spells'));
+	wrapper.append(panel);
+	$('#spells').append(wrapper);
+
+	/*
+	if ($('.spell').not(':hidden').length % 4 == 0) {
+		var clearfix = $('<div></div>')
+			.addClass('clearfix')
+			.addClass('visible-md-block')
+			.addClass('visible-lg-block')
+			;
+		$('#spells').append(clearfix);
+	}
+	*/
 }
 
 function parseAttrs(spell) {
@@ -84,14 +105,14 @@ function addSpellAttr(panel, key, val) {
 }
 
 function filterSpells() {
-	$('.panel').hide();
+	$('.spell').hide();
 
 	var classes = $('#classes').find(':checked').map(function() { return this.id; }).get();
 	var levels = $('#levels').find(':checked').map(function() { return this.id.substr(3); }).get();
 	var schools = $('#schools').find(':checked').map(function() { return this.id; }).get();
 	var spellName = $('#text').val().toLowerCase();
 
-	$('.panel').filter(function() {
+	$('.spell').filter(function() {
 		if (!filterByClass(this, classes)) {
 			return false;
 		}
@@ -125,6 +146,8 @@ function filterSpells() {
 		// you've reached the end and passed!
 		return true;
 	}).show();
+
+	updateUI();
 }
 
 function filterByClass(el, classes) {
@@ -167,4 +190,25 @@ function filterBySchool(el, schools) {
 		return inSchool;
 	}
 	return true;
+}
+
+function updateUI() {
+	$('.spell-fix').remove();
+	var clearfix = $('<div></div>')
+		.addClass('clearfix')
+		.addClass('spell-fix')
+		;
+	$('.spell:visible').each(function(i) {
+		if ((i + 1) % 2 == 0) {
+			$(this).after(clearfix.clone().addClass('visible-sm-block'));
+		}
+		if ((i + 1) % 3 == 0) {
+			$(this).after(clearfix.clone().addClass('visible-md-block'));
+		}
+		if ((i + 1) % 4 == 0) {
+			$(this).after(clearfix.clone().addClass('visible-lg-block'));
+		}
+	});
+
+	$('#spell-visible').text($('.spell:visible').length);
 }
