@@ -1,18 +1,41 @@
 $(document).ready(parseSpells);
 
+
+var saveIcon = $('<span></span>')
+	.addClass('glyphicon')
+	.addClass('glyphicon-plus')
+	.attr('aria-hidden', true);
+saveButton = $('<button></button>')
+	.addClass('btn')
+	.addClass('btn-default')
+	.addClass('pull-right')
+	.attr('aria-label', 'save to spell list')
+	.append(saveIcon);
+
+var deleteIcon = $('<span></span>')
+	.addClass('glyphicon')
+	.addClass('glyphicon-minus')
+	.attr('aria-hidden', true);
+deleteButton = $('<button></button>')
+	.addClass('btn')
+	.addClass('btn-default')
+	.addClass('pull-right')
+	.attr('aria-label', 'delete from spell list')
+	.append(deleteIcon);
+
 function parseSpells() {
 	if (!localStorage['spells']) {
 		console.log('getting spell data from server...');
 		$.getScript('https://dl.dropboxusercontent.com/s/wneq3reu80vdlkb/spellData.json', function() {
 				localStorage['spells'] = JSON.stringify(jsonSpellData);
 				jsonSpellData.forEach(appendSpell);
+				updateUI();
 				});
 	} else {
 		JSON.parse(localStorage['spells']).forEach(appendSpell);
+		updateUI();
 	}
 
-	updateUI();
-	$('#spell-total').text($('.spell').length);
 	$('#filters').change(filterSpells);
 	$('#text').keyup(filterSpells);
 }
@@ -40,15 +63,16 @@ function appendSpell(spell) {
 	}
 
 	var heading = $('<div></div>')
-		.addClass('panel-heading');
+		.addClass('panel-heading')
+		.append(saveButton.clone());
 
-	var spellName = $('<span></span>')
+	var spellName = $('<h3></h3>')
 		.addClass('spell-name')
+		.addClass('panel-title')
 		.text(spell.name);
 	heading.append(spellName);
 
-	var info = $('<div></div>')
-		.addClass('pull-right')
+	var info = $('<small></small>')
 		.text(spell.level + ' ' + spell.school);
 	heading.append(info);
 
@@ -211,4 +235,5 @@ function updateUI() {
 	});
 
 	$('#spell-visible').text($('.spell:visible').length);
+	$('#spell-total').text($('.spell').length);
 }
