@@ -79,34 +79,33 @@ function appendSpell(spell) {
 	var body = $('<div><div>')
 		.addClass('panel-body');
 
-	var footer = $('<div></div>')
-		.addClass('panel-footer')
-		.text(tags.concat(attrs.classes).join(', '));
-
 	body.append($.parseHTML(spell.desc));
 	if (spell.higher_level) {
 		body.append($.parseHTML(spell.higher_level));
 	}
-	heading.appendTo(panel);
-	body.appendTo(panel);
-	footer.appendTo(panel);
+
+	body.append($('<div></div>').text('Casting time: ' + spell.casting_time));
+	body.append($('<div></div>').text('Duration: ' + spell.duration));
+	body.append($('<div></div>').text('Range: ' + spell.range));
+	body.append($('<div></div>').text('Source: ' + spell.page));
+
+	var footerText = tags.concat(attrs.classes);
+	if (attrs.oaths) {
+		footerText = footerText.concat(attrs.oaths);
+	}
+	var footer = $('<div></div>')
+		.addClass('panel-footer')
+		.text(footerText.join(', '));
+
+	panel.append(heading)
+		.append(body)
+		.append(footer)
 	wrapper.append(panel);
 	$('#spells').append(wrapper);
-
-	/*
-	if ($('.spell').not(':hidden').length % 4 == 0) {
-		var clearfix = $('<div></div>')
-			.addClass('clearfix')
-			.addClass('visible-md-block')
-			.addClass('visible-lg-block')
-			;
-		$('#spells').append(clearfix);
-	}
-	*/
 }
 
 function parseAttrs(spell) {
-	return {
+	var attrs = {
 		verbal: (spell.components.indexOf('V') !== -1),
 		somantic: (spell.components.indexOf('S') !== -1), // motion
 		material: (spell.components.indexOf('M') !== -1),
@@ -116,6 +115,11 @@ function parseAttrs(spell) {
 		classes: spell.class.split(', '),
 		school: spell.school.toLowerCase()
 	};
+
+	if (spell.oaths) {
+			attrs.oaths = spell.oaths.split(', ');
+	}
+	return attrs;
 }
 
 function addSpellAttr(panel, key, val) {
