@@ -5,8 +5,8 @@ Loads the spell list from an [external file](https://www.reddit.com/r/DnD/commen
 
 ## To do
 ### Maybe?
-* Save to a personal (localstorage) spell book?
 * Hide the filters in a hamburger menu?
+* Import/export the stringified localstorage between browsers?
 
 ## License
 As with everything I code, this is licensed under JSON, which specifically states the software shall not be used for evil. In this case I need to clarify that this is evil in *the real world*, and lawful/neutral/chaotic evil *characters* are free to use it.

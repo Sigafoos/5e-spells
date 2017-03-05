@@ -1,20 +1,57 @@
 $(document).ready(parseSpells);
 
+var saveIcon = $('<span></span>')
+	.addClass('glyphicon')
+	.addClass('glyphicon-plus')
+	.attr('aria-hidden', true);
+saveButton = $('<button></button>')
+	.addClass('btn')
+	.addClass('btn-default')
+	.addClass('save-spell')
+	.addClass('pull-right')
+	.attr('aria-label', 'save to spell list')
+	.attr('title', 'save to spell list')
+	.append(saveIcon);
+
+var deleteIcon = $('<span></span>')
+	.addClass('glyphicon')
+	.addClass('glyphicon-minus')
+	.attr('aria-hidden', true);
+deleteButton = $('<button></button>')
+	.addClass('btn')
+	.addClass('btn-default')
+	.addClass('delete-spell')
+	.addClass('pull-right')
+	.attr('aria-label', 'delete from spell list')
+	.attr('title', 'delete from spell list')
+	.append(deleteIcon);
+
 function parseSpells() {
 	if (!localStorage['spells']) {
 		console.log('getting spell data from server...');
 		$.getScript('https://dl.dropboxusercontent.com/s/wneq3reu80vdlkb/spellData.json', function() {
 				localStorage['spells'] = JSON.stringify(jsonSpellData);
+				localStorage['saved'] = JSON.stringify([]);
 				jsonSpellData.forEach(appendSpell);
+				updateUI();
+				console.log('spell data saved');
 				});
 	} else {
+		featureCheck();
+		savedSpells = JSON.parse(localStorage['saved']); // globally scoped
+		if (savedSpells.length !== 0) {
+			$('#saved').parent().removeAttr('disabled');
+		}
 		JSON.parse(localStorage['spells']).forEach(appendSpell);
+		updateUI();
 	}
 
-	updateUI();
-	$('#spell-total').text($('.spell').length);
 	$('#filters').change(filterSpells);
 	$('#text').keyup(filterSpells);
+	$('#saved').click(filterSpells);
+	$('.save-spell').click(saveSpell);
+	$('.delete-spell').click(deleteSpell);
+	$('#refresh').click(localStorageRefresh);
 }
 
 function appendSpell(spell) {
@@ -42,13 +79,20 @@ function appendSpell(spell) {
 	var heading = $('<div></div>')
 		.addClass('panel-heading');
 
-	var spellName = $('<span></span>')
+	if (savedSpells.indexOf(spell.name) !== -1) {
+		heading.append(deleteButton.clone());
+		wrapper.attr('data-saved', true);
+	} else {
+		heading.append(saveButton.clone());
+	}
+
+	var spellName = $('<h3></h3>')
 		.addClass('spell-name')
+		.addClass('panel-title')
 		.text(spell.name);
 	heading.append(spellName);
 
-	var info = $('<div></div>')
-		.addClass('pull-right')
+	var info = $('<small></small>')
 		.text(spell.level + ' ' + spell.school);
 	heading.append(info);
 
@@ -117,6 +161,10 @@ function filterSpells() {
 	var spellName = $('#text').val().toLowerCase();
 
 	$('.spell').filter(function() {
+		if ($('#saved').is(':checked') && $(this).attr('data-saved') !== "true") {
+			return false;
+		}
+
 		if (!filterByClass(this, classes)) {
 			return false;
 		}
@@ -215,4 +263,79 @@ function updateUI() {
 	});
 
 	$('#spell-visible').text($('.spell:visible').length);
+	$('#spell-total').text($('.spell').length);
+}
+
+function saveSpell() {
+	var spellName = $(this).parent().find('.spell-name')[0];
+	if (spellName == undefined) {
+		return false;
+	}
+	spellName = spellName.textContent;
+	if (savedSpells.indexOf(spellName) == -1) {
+		savedSpells.push(spellName);
+		updateSaved();
+		$(this).parents('.spell').attr('data-saved', true);
+		$(this).parent().prepend(deleteButton.clone());
+		$(this).remove();
+
+		// rebind
+		$('.delete-spell').click(deleteSpell);
+	}
+}
+
+function deleteSpell() {
+	var spellName = $(this).parent().find('.spell-name')[0];
+	if (spellName == undefined) {
+		return false;
+	}
+	spellName = spellName.textContent;
+	var i = savedSpells.indexOf(spellName);
+	if (i != -1) {
+		savedSpells.splice(i, 1)
+		$(this).parents('.spell').removeAttr('data-saved');
+		$(this).parent().prepend(saveButton.clone());
+		$(this).remove();
+
+		// rebind
+		$('.save-spell').click(saveSpell);
+
+		// removing it means it should disappear
+		if ($('#saved').is(':checked')) {
+			filterSpells();
+		}
+
+		updateSaved();
+	}
+}
+
+function updateSaved() {
+	localStorage['saved'] = JSON.stringify(savedSpells);
+	if (savedSpells.length === 0) {
+		// don't trap yourself in saved only
+		if ($('#saved').is(':checked')) {
+			$('#saved').parent().click();
+		}
+		$('#saved').parent().attr('disabled', true);
+	} else if (savedSpells.length === 1) {
+		$('#saved').parent().removeAttr('disabled');
+	}
+}
+
+function featureCheck() {
+	if (!localStorage['saved']) {
+		var upgrade = $('<div></div>')
+			.addClass('alert')
+			.addClass('alert-danger')
+			.addClass('text-center')
+			.attr('role', 'alert')
+			.text('Your spell list is out of date! ');
+		upgrade.append($('<strong><a href="#" class="text-danger" id="refresh">Update now!</a></strong>'));
+		upgrade.insertAfter('h1');
+	}
+}
+
+function localStorageRefresh() {
+	localStorage.removeItem('spells');
+	location.reload();
 }
