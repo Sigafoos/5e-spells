@@ -32,6 +32,7 @@ function parseSpells() {
 		$.getScript('https://dl.dropboxusercontent.com/s/wneq3reu80vdlkb/spellData.json', function() {
 				localStorage['spells'] = JSON.stringify(jsonSpellData);
 				localStorage['saved'] = JSON.stringify([]);
+				savedSpells = [];
 				jsonSpellData.forEach(appendSpell);
 				updateUI();
 				console.log('spell data saved');
