@@ -27,19 +27,22 @@ deleteButton = $('<button></button>')
 	.append(deleteIcon);
 
 function parseSpells() {
+	if (!localStorage['saved']) {
+		localStorage['saved'] = JSON.stringify([]);
+		savedSpells = [];
+	} else {
+		savedSpells = JSON.parse(localStorage['saved']); // globally scoped
+	}
 	if (!localStorage['spells']) {
 		console.log('getting spell data from server...');
 		$.getScript('https://dl.dropboxusercontent.com/s/wneq3reu80vdlkb/spellData.json', function() {
 				localStorage['spells'] = JSON.stringify(jsonSpellData);
-				localStorage['saved'] = JSON.stringify([]);
-				savedSpells = [];
 				jsonSpellData.forEach(appendSpell);
 				updateUI();
 				console.log('spell data saved');
 				});
 	} else {
-		featureCheck();
-		savedSpells = JSON.parse(localStorage['saved']); // globally scoped
+		//featureCheck(); // nothing to check yet
 		if (savedSpells.length !== 0) {
 			$('#saved').parent().removeAttr('disabled');
 		}
@@ -324,7 +327,7 @@ function updateSaved() {
 }
 
 function featureCheck() {
-	if (!localStorage['saved']) {
+	if (false) { // no upgrades yet
 		var upgrade = $('<div></div>')
 			.addClass('alert')
 			.addClass('alert-danger')
